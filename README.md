@@ -3,19 +3,19 @@ audit-scripts
 
 Scripts to run quick audits.
 
-bad_attrs.py
-------------
+bad-attrs
+---------
 
 Find files with the immutable (`+i`) or append-only (`+a`) flag set.
 
-    ./bad_attrs.py /
+    ./src/bad-attrs /
 
-writable_dirs.py
-----------------
+writable-dirs
+-------------
 
 Which directories are writable by a user?
 
-    ./writable_dirs.py -u USERNAME /
+    ./src/writable-dirs -u USERNAME /
 
 License
 -------
