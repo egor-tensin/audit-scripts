@@ -18,7 +18,7 @@ import sys
 
 
 def console_log_formatter():
-    fmt = '%(asctime)s | %(process)d | %(levelname)s | %(message)s'
+    fmt = '%(asctime)s | %(processName)s | %(levelname)s | %(message)s'
     datefmt = '%Y-%m-%d %H:%M:%S'
     return logging.Formatter(fmt=fmt, datefmt=datefmt)
 
@@ -36,6 +36,8 @@ def console_log_handler():
 
 @contextlib.contextmanager
 def launch_logging_thread(queue):
+    process = mp.current_process()
+    process.name = 'scandir'
     listener = logging.handlers.QueueListener(queue, console_log_handler())
     listener.start()
     try:
@@ -260,7 +262,8 @@ def main(argv=None):
         scandir_queue = mp.SimpleQueue()
         access_process_args = prog_args, log_queue, access_queue, scandir_queue
         access_process = mp.Process(target=access_main,
-                                    args=access_process_args)
+                                    args=access_process_args,
+                                    name='access')
         access_queue.put([prog_args.root_dir])
         access_process.start()
         scandir_main(access_queue, scandir_queue)
