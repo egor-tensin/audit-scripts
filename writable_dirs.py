@@ -180,9 +180,8 @@ def scandir(dir_path):
     except (PermissionError, FileNotFoundError) as e:
         logging.warning('%s', e)
         return
-    # On Python 3.6+:
-    # with entry_it:
-    yield from entry_it
+    with entry_it:
+        yield from entry_it
 
 
 def enum_dirs(dir_path):
