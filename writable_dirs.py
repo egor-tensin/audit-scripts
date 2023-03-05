@@ -47,7 +47,7 @@ def launch_logging_thread(queue):
 
 
 @contextlib.contextmanager
-def set_up_logging(queue):
+def setup_logging(queue):
     config = {
         'version': 1,
         'handlers': {
@@ -230,7 +230,7 @@ def access_loop(access_queue, scandir_queue):
 
 
 def access_main(args, log_queue, access_queue, scandir_queue):
-    with close_queue(scandir_queue), set_up_logging(log_queue):
+    with close_queue(scandir_queue), setup_logging(log_queue):
         drop_privileges(args.uid, args.gid)
         dump_process_info()
         access_loop(access_queue, scandir_queue)
@@ -256,7 +256,7 @@ def scandir_main(access_queue, scandir_queue):
 
 def main(argv=None):
     log_queue = mp.Queue()
-    with launch_logging_thread(log_queue), set_up_logging(log_queue):
+    with launch_logging_thread(log_queue), setup_logging(log_queue):
         prog_args = parse_args(argv)
         access_queue = mp.SimpleQueue()
         scandir_queue = mp.SimpleQueue()
