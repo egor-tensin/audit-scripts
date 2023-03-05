@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 # Copyright (c) 2018 Egor Tensin <Egor.Tensin@gmail.com>
-# This file is part of the "writable-dirs" project.
-# For details, see https://github.com/egor-tensin/writable-dirs.
+# This file is part of the "audit-scripts" project.
+# For details, see https://github.com/egor-tensin/audit-scripts.
 # Distributed under the MIT License.
 
 import argparse
