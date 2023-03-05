@@ -98,6 +98,8 @@ def path_has_bad_flags(path):
             # Either one of:
             #     Inappropriate ioctl for device
             #     Permission denied
+            # It's relied upon that fcntl throws OSError instead of
+            # PermissionError.
             logging.warning('%s: %s', path, e)
             return False
         raise
