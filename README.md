@@ -10,6 +10,16 @@ Find files with the immutable (`+i`) or append-only (`+a`) flag set.
 
     ./src/bad-attrs /
 
+open-ports.sh
+-------------
+
+List open ports for a host.
+
+    ./src/open-ports.sh HOST               # Scan all ports
+    ./src/open-ports.sh -6 HOST            # Resolve domains to IPv6 addresses
+    ./src/open-ports.sh -t 1000 HOST       # Scan the top 1000 most popular ports
+    ./src/open-ports.sh -p 8080-8100 HOST  # Specify port ranges in the nmap format
+
 writable-dirs
 -------------
 
