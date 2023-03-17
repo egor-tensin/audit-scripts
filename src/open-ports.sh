@@ -92,7 +92,7 @@ main() {
     check_tool nmap xmlstarlet
     parse_args "$@"
 
-    nmap ${nmap_args[@]+"${nmap_args[@]}"} -oX - -- "$host" | xmlstarlet sel -t -v '//port[state/@state="open"]/@portid' -nl
+    nmap -Pn ${nmap_args[@]+"${nmap_args[@]}"} -oX - -- "$host" | xmlstarlet sel -t -v '//port[state/@state="open"]/@portid' -nl
 }
 
 main "$@"
