@@ -3,12 +3,12 @@ audit-scripts
 
 Scripts to run quick audits.
 
-bad-attrs
----------
+bad-attrs.py
+------------
 
 Find files with the immutable (`+i`) or append-only (`+a`) flag set.
 
-    ./src/bad-attrs /
+    ./src/bad-attrs.py /
 
 open-ports.sh
 -------------
@@ -20,12 +20,12 @@ List open ports for a host.
     ./src/open-ports.sh -t 1000 HOST       # Scan the top 1000 most popular ports
     ./src/open-ports.sh -p 8080-8100 HOST  # Specify port ranges in the nmap format
 
-writable-dirs
--------------
+writable-dirs.py
+----------------
 
 Which directories are writable by a user?
 
-    ./src/writable-dirs -u USERNAME /
+    ./src/writable-dirs.py -u USERNAME /
 
 Ubuntu
 ------
