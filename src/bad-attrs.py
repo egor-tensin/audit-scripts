@@ -2,7 +2,7 @@
 
 # Copyright (c) 2023 Egor Tensin <Egor.Tensin@gmail.com>
 # This file is part of the "audit-scripts" project.
-# For details, see https://github.com/egor-tensin/audit-scripts.
+# For details, see https://github.com/egor-tensin/audit-scripts
 # Distributed under the MIT License.
 
 import argparse
