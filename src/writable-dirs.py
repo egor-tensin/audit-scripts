@@ -18,8 +18,8 @@ import sys
 
 
 def console_log_formatter():
-    fmt = '%(asctime)s | %(processName)s | %(levelname)s | %(message)s'
-    datefmt = '%Y-%m-%d %H:%M:%S'
+    fmt = "%(asctime)s | %(processName)s | %(levelname)s | %(message)s"
+    datefmt = "%Y-%m-%d %H:%M:%S"
     return logging.Formatter(fmt=fmt, datefmt=datefmt)
 
 
@@ -37,7 +37,7 @@ def console_log_handler():
 @contextlib.contextmanager
 def launch_logging_thread(queue):
     process = mp.current_process()
-    process.name = 'scandir'
+    process.name = "scandir"
     listener = logging.handlers.QueueListener(queue, console_log_handler())
     listener.start()
     try:
@@ -49,16 +49,16 @@ def launch_logging_thread(queue):
 @contextlib.contextmanager
 def setup_logging(queue):
     config = {
-        'version': 1,
-        'handlers': {
-            'sink': {
-                'class': 'logging.handlers.QueueHandler',
-                'queue': queue,
+        "version": 1,
+        "handlers": {
+            "sink": {
+                "class": "logging.handlers.QueueHandler",
+                "queue": queue,
             },
         },
-        'root': {
-            'handlers': ['sink'],
-            'level': 'DEBUG',
+        "root": {
+            "handlers": ["sink"],
+            "level": "DEBUG",
         },
     }
     logging.config.dictConfig(config)
@@ -99,14 +99,14 @@ def map_group_name(group_name):
 def parse_user_name(src):
     uid = map_user_name(src)
     if uid is None:
-        raise argparse.ArgumentTypeError('unknown user name: {}'.format(src))
+        raise argparse.ArgumentTypeError("unknown user name: {}".format(src))
     return uid
 
 
 def parse_group_name(src):
     gid = map_group_name(src)
     if gid is None:
-        raise argparse.ArgumentTypeError('unknown group name: {}'.format(src))
+        raise argparse.ArgumentTypeError("unknown group name: {}".format(src))
     return gid
 
 
@@ -117,7 +117,7 @@ def parse_uid(src):
         return parse_user_name(src)
     uid = validate_uid(uid)
     if uid is None:
-        raise argparse.ArgumentTypeError('unknown UID: {}'.format(src))
+        raise argparse.ArgumentTypeError("unknown UID: {}".format(src))
     return uid
 
 
@@ -128,7 +128,7 @@ def parse_gid(src):
         return parse_group_name(src)
     gid = validate_gid(gid)
     if gid is None:
-        raise argparse.ArgumentTypeError('unknown GID: {}'.format(src))
+        raise argparse.ArgumentTypeError("unknown GID: {}".format(src))
     return gid
 
 
@@ -140,14 +140,26 @@ def parse_args(argv=None):
     if argv is None:
         argv = sys.argv[1:]
     parser = argparse.ArgumentParser()
-    parser.add_argument('root_dir', default='/', nargs='?', metavar='DIR',
-                        help='set root directory')
-    parser.add_argument('--user', '-u', dest='uid', required=True,
-                        metavar='USER', type=parse_uid,
-                        help='set new process\' UID')
-    parser.add_argument('--group', '-g', dest='gid',
-                        metavar='GROUP', type=parse_gid,
-                        help='set new process\' GID')
+    parser.add_argument(
+        "root_dir", default="/", nargs="?", metavar="DIR", help="set root directory"
+    )
+    parser.add_argument(
+        "--user",
+        "-u",
+        dest="uid",
+        required=True,
+        metavar="USER",
+        type=parse_uid,
+        help="set new process' UID",
+    )
+    parser.add_argument(
+        "--group",
+        "-g",
+        dest="gid",
+        metavar="GROUP",
+        type=parse_gid,
+        help="set new process' GID",
+    )
     args = parser.parse_args(argv)
     if args.gid is None:
         args.gid = get_primary_gid(args.uid)
@@ -156,21 +168,21 @@ def parse_args(argv=None):
 
 def dump_process_info():
     ruid, euid, suid = os.getresuid()
-    logging.info('User IDs:')
-    logging.info('\tReal: %d', ruid)
-    logging.info('\tEffective: %d', euid)
-    logging.info('\tSaved: %d', suid)
+    logging.info("User IDs:")
+    logging.info("\tReal: %d", ruid)
+    logging.info("\tEffective: %d", euid)
+    logging.info("\tSaved: %d", suid)
     rgid, egid, sgid = os.getresgid()
-    logging.info('Group IDs:')
-    logging.info('\tReal: %d', rgid)
-    logging.info('\tEffective: %d', egid)
-    logging.info('\tSaved: %d', sgid)
+    logging.info("Group IDs:")
+    logging.info("\tReal: %d", rgid)
+    logging.info("\tEffective: %d", egid)
+    logging.info("\tSaved: %d", sgid)
 
 
 def check_root():
     if os.getuid() == 0:
         return True
-    logging.error('Must be run as root')
+    logging.error("Must be run as root")
     return False
 
 
@@ -178,7 +190,7 @@ def scandir(dir_path):
     try:
         entry_it = os.scandir(dir_path)
     except (PermissionError, FileNotFoundError) as e:
-        logging.warning('%s', e)
+        logging.warning("%s", e)
         return
     with entry_it:
         yield from entry_it
@@ -220,7 +232,7 @@ def access_loop(access_queue, scandir_queue):
         denied_dir_list = []
         for dir_path in dir_list:
             if is_writable(dir_path):
-                logging.info('Writable: %s', dir_path)
+                logging.info("Writable: %s", dir_path)
             else:
                 denied_dir_list.append(dir_path)
         if not denied_dir_list:
@@ -237,9 +249,11 @@ def access_main(args, log_queue, access_queue, scandir_queue):
 
 def scandir_loop(access_queue, scandir_queue):
     for parent_dir_list in iter(scandir_queue.get, None):
-        child_dir_list = [child_dir
-                          for parent_dir in parent_dir_list
-                          for child_dir in enum_dirs(parent_dir)]
+        child_dir_list = [
+            child_dir
+            for parent_dir in parent_dir_list
+            for child_dir in enum_dirs(parent_dir)
+        ]
         if not child_dir_list:
             break
         access_queue.put(child_dir_list)
@@ -260,15 +274,15 @@ def main(argv=None):
         access_queue = mp.SimpleQueue()
         scandir_queue = mp.SimpleQueue()
         access_process_args = prog_args, log_queue, access_queue, scandir_queue
-        access_process = mp.Process(target=access_main,
-                                    args=access_process_args,
-                                    name='access')
+        access_process = mp.Process(
+            target=access_main, args=access_process_args, name="access"
+        )
         access_queue.put([prog_args.root_dir])
         access_process.start()
         scandir_main(access_queue, scandir_queue)
         access_process.join()
 
 
-if __name__ == '__main__':
-    mp.set_start_method('spawn')
+if __name__ == "__main__":
+    mp.set_start_method("spawn")
     main()

@@ -19,9 +19,10 @@ import sys
 @contextmanager
 def setup_logging():
     logging.basicConfig(
-        format='%(asctime)s | %(levelname)s | %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        level=logging.DEBUG)
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        level=logging.DEBUG,
+    )
     try:
         yield
     except Exception as e:
@@ -33,7 +34,7 @@ def scandir(dir_path):
     try:
         entry_it = os.scandir(dir_path)
     except (PermissionError, FileNotFoundError) as e:
-        logging.warning('%s', e)
+        logging.warning("%s", e)
         return
     with entry_it:
         yield from entry_it
@@ -70,7 +71,7 @@ def low_level_open(path, flags):
 FS_IOC_GETFLAGS = 0x80086601
 
 FS_IMMUTABLE_FL = 0x00000010
-FS_APPEND_FL    = 0x00000020
+FS_APPEND_FL = 0x00000020
 
 BAD_FLAGS = [FS_IMMUTABLE_FL, FS_APPEND_FL]
 
@@ -80,7 +81,7 @@ def flags_contain_bad_flags(flags):
 
 
 def fd_get_flags(fd):
-    a = array.array('L', [0])
+    a = array.array("L", [0])
     fcntl.ioctl(fd, FS_IOC_GETFLAGS, a, True)
     return a[0]
 
@@ -100,28 +101,27 @@ def path_has_bad_flags(path):
             #     Permission denied
             # It's relied upon that fcntl throws OSError instead of
             # PermissionError.
-            logging.warning('%s: %s', path, e)
+            logging.warning("%s: %s", path, e)
             return False
         raise
     return flags_contain_bad_flags(flags)
 
 
 def do_dir(root):
-    logging.info('Directory: %s', root)
+    logging.info("Directory: %s", root)
     for entry in traverse_tree(root):
         if skip_leaf(entry):
             continue
-        #logging.debug('Path: %s', entry.path)
+        # logging.debug('Path: %s', entry.path)
         if path_has_bad_flags(entry.path):
-            logging.warning('Bad flags: %s', entry.path)
+            logging.warning("Bad flags: %s", entry.path)
 
 
 def parse_args(argv=None):
     if argv is None:
         argv = sys.argv[1:]
     parser = argparse.ArgumentParser()
-    parser.add_argument('dir', metavar='DIR',
-                        help='set root directory')
+    parser.add_argument("dir", metavar="DIR", help="set root directory")
     return parser.parse_args()
 
 
@@ -131,5 +131,5 @@ def main(argv=None):
         do_dir(args.dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
